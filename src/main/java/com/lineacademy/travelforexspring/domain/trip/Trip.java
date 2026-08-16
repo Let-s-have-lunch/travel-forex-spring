@@ -1,6 +1,7 @@
 package com.lineacademy.travelforexspring.domain.trip;
 
 import com.lineacademy.travelforexspring.domain.common.BaseTimeEntity;
+import com.lineacademy.travelforexspring.domain.tripexpense.TripExpense;
 import com.lineacademy.travelforexspring.domain.user.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -10,6 +11,8 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "trips")
@@ -39,7 +42,8 @@ public class Trip extends BaseTimeEntity {
     @Column(name = "budget_krw", precision = 15, scale = 2, nullable = false)
     private BigDecimal budgetKrw = BigDecimal.ZERO;
 
-    // TODO : TripExpense 관계 매핑 필요
+    @OneToMany(mappedBy = "trip")
+    private List<TripExpense> expenses = new ArrayList<>();
 
     @Builder
     public Trip(User user, String title, LocalDate startDate, LocalDate endDate, BigDecimal budgetKrw) {
