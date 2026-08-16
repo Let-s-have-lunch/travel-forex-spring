@@ -58,4 +58,12 @@ public class Trip extends BaseTimeEntity {
         // 이를 막고 값이 안들어오면 무조건 0으로 채운다는 방엉코드를 작성한다.
         this.budgetKrw = budgetKrw != null ? budgetKrw : BigDecimal.ZERO;
     }
+
+
+    public void updateTrip(String title, LocalDate startDate, LocalDate endDate, BigDecimal budgetKrw) {
+        this.title = title;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.budgetKrw = budgetKrw != null ? budgetKrw : BigDecimal.ZERO;
+    }
 }
