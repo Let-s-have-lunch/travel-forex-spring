@@ -7,6 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class TravelForexSpringApplication {
 
     public static void main(String[] args) {
+
         SpringApplication.run(TravelForexSpringApplication.class, args);
     }
 
