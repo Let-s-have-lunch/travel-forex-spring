@@ -3,10 +3,9 @@ package com.lineacademy.travelforexspring.domain.user;
 import com.lineacademy.travelforexspring.domain.common.BaseTimeEntity;
 import com.lineacademy.travelforexspring.domain.enums.Gender;
 import com.lineacademy.travelforexspring.domain.enums.UserRole;
+import com.lineacademy.travelforexspring.domain.inquiry.Inquiry;
 import com.lineacademy.travelforexspring.domain.trip.Trip;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -60,6 +59,9 @@ public class User extends BaseTimeEntity {
 
     @OneToMany(mappedBy = "user")
     private List<Trip> trips = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user")
+    private List<Inquiry> inquiries = new ArrayList<>();
 
     @Builder
     public User(String email, String password, String nickname, String phoneNumber, Gender gender, LocalDate birthdate, UserRole role) {

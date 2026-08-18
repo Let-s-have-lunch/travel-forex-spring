@@ -2,6 +2,7 @@ package com.lineacademy.travelforexspring.domain.inquiry;
 
 import com.lineacademy.travelforexspring.domain.common.BaseTimeEntity;
 import com.lineacademy.travelforexspring.domain.enums.InquiryStatus;
+import com.lineacademy.travelforexspring.domain.user.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -41,21 +42,22 @@ public class Inquiry extends BaseTimeEntity {
     @Column(name = "answered_at")
     private LocalDateTime answeredAt;
 
-    // TODO : user 관계 작성
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     @Builder
     public Inquiry(
-//            User user,
+            User user,
             String title,
             String content
     ) {
-//        this.user = user;
+        this.user = user;
         this.title = title;
         this.content = content;
         this.status = InquiryStatus.PENDING;
     }
 
-    // 관리자 답변 등록 시 상태 변경을 위한 편의 메서드
     public void addAnswer(String answer) {
         this.answer = answer;
         this.status = InquiryStatus.ANSWERED;
