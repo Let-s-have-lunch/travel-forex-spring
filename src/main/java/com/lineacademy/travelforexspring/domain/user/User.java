@@ -55,7 +55,7 @@ public class User extends BaseTimeEntity {
     @Column(nullable = false)
     private UserRole role = UserRole.USER;
 
-    // TODO : Wallet과의 관계 매핑 필요
+    // TODO : Wallet과 관계 짓기
 
     @OneToMany(mappedBy = "user")
     private List<Trip> trips = new ArrayList<>();
@@ -72,5 +72,16 @@ public class User extends BaseTimeEntity {
         this.gender = gender;
         this.birthdate = birthdate;
         this.role = role;
+    }
+
+    public void updatePassword(String newPassword) {
+        this.password = newPassword;
+    }
+
+    public void updateProfile(String nickname, String phoneNumber, Gender gender, LocalDate birthdate) {
+        this.nickname = nickname;
+        this.phoneNumber = phoneNumber;
+        this.gender = gender;
+        this.birthdate = birthdate;
     }
 }
