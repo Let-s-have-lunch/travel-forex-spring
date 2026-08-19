@@ -1,5 +1,6 @@
 package com.lineacademy.travelforexspring.domain.wallettransaction;
 
+
 import com.lineacademy.travelforexspring.domain.common.BaseTimeEntity;
 import com.lineacademy.travelforexspring.domain.enums.TransactionType;
 import com.lineacademy.travelforexspring.domain.wallet.Wallet;
@@ -25,10 +26,6 @@ public class WalletTransaction extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "wallet_id", nullable = false)
-    private Wallet wallet;
-
     @Enumerated(EnumType.STRING)
     @Column(name = "transaction_type", nullable = false)
     private TransactionType transactionType;
@@ -51,6 +48,10 @@ public class WalletTransaction extends BaseTimeEntity {
     @Column(name = "transaction_date", nullable = false)
     private LocalDateTime transactionDate;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "wallet_id", nullable = false)
+    private Wallet wallet;
+
     @Builder
     public WalletTransaction(
             Wallet wallet,
@@ -69,6 +70,24 @@ public class WalletTransaction extends BaseTimeEntity {
         this.convertedKrwAmount = convertedKrwAmount;
         this.transactionMethod = transactionMethod;
         this.memo = memo;
-        this.transactionDate = transactionDate != null ? transactionDate : LocalDateTime.now();
+        this.transactionDate = transactionDate;
+    }
+
+    public void updateTransaction(
+            TransactionType transactionType,
+            BigDecimal amount,
+            BigDecimal appliedExchangeRate,
+            BigDecimal convertedKrwAmount,
+            String transactionMethod,
+            String memo,
+            LocalDateTime transactionDate
+    ) {
+        this.transactionType = transactionType;
+        this.amount = amount;
+        this.appliedExchangeRate = appliedExchangeRate;
+        this.convertedKrwAmount = convertedKrwAmount;
+        this.transactionMethod = transactionMethod;
+        this.memo = memo;
+        this.transactionDate = transactionDate;
     }
 }
