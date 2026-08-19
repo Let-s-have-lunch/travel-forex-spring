@@ -3,15 +3,24 @@ package com.lineacademy.travelforexspring.utils;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
 @Component
 public class JwtUtil {
-    private final String secretString = "your_secret_key_here";
-    private final SecretKey key = Keys.hmacShaKeyFor(secretString.getBytes());
+    private final SecretKey key;
+    public JwtUtil(
+            // 환경변수를 불러오는 법
+            @Value("${jwt.secret}") String secretString
+    ) {
+        // JwtUtil을 이용한 객체를 생성할 때 멤버변수 Key 값을 집어넣게 되는데
+        // HMAC-SHA 알고리즘을 통한 암호화로 secretKeyString의 값을 UTF-8 방식으로 가져와서(한번더 꼬아서)
+        this.key = Keys.hmacShaKeyFor(secretString.getBytes(StandardCharsets.UTF_8));
+    }
 
     public String generateToken(Long userId) {
         return Jwts.builder()
