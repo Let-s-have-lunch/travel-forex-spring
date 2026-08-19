@@ -21,13 +21,14 @@ public class JwtUtil {
 
     public String generateToken(Long userId) {
         return Jwts.builder()
-                .claim("id", userId)
+                .claim("id", userId) // Payload에 id 추가
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24))
                 .signWith(key)
                 .compact();
     }
 
+    // 토큰에서 userId 추출
     public Long getUserIdFromToken(String token) {
         return Jwts.parser()
                 .verifyWith(key)
