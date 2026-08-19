@@ -5,6 +5,7 @@ import com.lineacademy.travelforexspring.domain.enums.CurrencyCode;
 import com.lineacademy.travelforexspring.domain.enums.ExpenseCategory;
 import com.lineacademy.travelforexspring.domain.enums.PaymentMethod;
 import com.lineacademy.travelforexspring.domain.trip.Trip;
+import com.lineacademy.travelforexspring.domain.wallettransaction.WalletTransaction;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -59,7 +60,9 @@ public class TripExpense extends BaseTimeEntity {
     @JoinColumn(name = "trip_id", nullable = false)
     private Trip trip;
 
-    // TODO : WalletTransaction과 관계 설정
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "wallet_transaction_id")
+    private WalletTransaction walletTransaction;
 
     @Builder
     public TripExpense(
@@ -71,7 +74,7 @@ public class TripExpense extends BaseTimeEntity {
             String merchant,
             PaymentMethod paymentMethod,
             boolean isWalletLinked,
-//            WalletTransaction walletTransaction,
+            WalletTransaction walletTransaction,
             String memo,
             LocalDateTime expenseDate
     ) {
@@ -83,7 +86,7 @@ public class TripExpense extends BaseTimeEntity {
         this.merchant = merchant;
         this.paymentMethod = paymentMethod;
         this.isWalletLinked = isWalletLinked;
-//        this.walletTransaction = walletTransaction;
+        this.walletTransaction = walletTransaction;
         this.memo = memo;
         this.expenseDate = expenseDate;
     }
