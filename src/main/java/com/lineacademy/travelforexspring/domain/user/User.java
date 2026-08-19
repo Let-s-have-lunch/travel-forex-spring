@@ -84,4 +84,31 @@ public class User extends BaseTimeEntity {
         this.gender = gender;
         this.birthdate = birthdate;
     }
+
+    // ==========================================
+    // 어드민 개별 수정 및 Soft Delete용 메서드
+    // ==========================================
+    public void updateNickname(String nickname) {
+        this.nickname = nickname;
+    }
+
+    public void updateEmail(String email) {
+        this.email = email;
+    }
+
+    public void updatePhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public void updateGender(Gender gender) {
+        this.gender = gender;
+    }
+
+    public void updateBirthdate(LocalDate birthdate) {
+        this.birthdate = birthdate;
+    }
+
+    public void updateRole(UserRole role) {
+        this.role = role;
+    }
 }

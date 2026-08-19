@@ -2,10 +2,14 @@ package com.lineacademy.travelforexspring.service;
 
 import com.lineacademy.travelforexspring.domain.enums.UserRole;
 import com.lineacademy.travelforexspring.domain.user.User;
+import com.lineacademy.travelforexspring.dto.admin.user.request.AdminUserUpdateRequest;
 import com.lineacademy.travelforexspring.dto.user.request.*;
 import com.lineacademy.travelforexspring.repository.UserRepository;
 import com.lineacademy.travelforexspring.utils.JwtUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -149,5 +153,80 @@ public class UserService {
         }
 
         user.softDeleteData();
+    }
+
+    // ==========================================
+    // 어드민 전용 서비스 메소드 (신규 추가)
+    // ==========================================
+
+    @Transactional(readOnly = true)
+    public Page<User> getUserList(int page, int size) {
+        Pageable pageable = PageRequest.of(page - 1, size);
+        return userRepository.findAllByDeletedAtIsNullOrderByIdDesc(pageable);
+    }
+
+    @Transactional
+    public User adminUpdateUser(Long targetUserId, AdminUserUpdateRequest request) {
+        User targetUser = userRepository.findById(targetUserId)
+                .orElseThrow(() -> new RuntimeException("USER_NOT_FOUND"));
+
+        // 1. 닉네임 변경 시 중복 검사 (본인 및 삭제된 회원 제외)
+        if (request.getNickname() != null && !request.getNickname().equals(targetUser.getNickname())) {
+            if (userRepository.existsByNicknameAndIdNotAndDeletedAtIsNull(request.getNickname(), targetUserId)) {
+                throw new RuntimeException("ALREADY_EXISTS_NICKNAME");
+            }
+            targetUser.updateNickname(request.getNickname());
+        }
+
+        // 2. 이메일 변경 시 중복 검사 (본인 및 삭제된 회원 제외)
+        if (request.getEmail() != null && !request.getEmail().equals(targetUser.getEmail())) {
+            if (userRepository.existsByEmailAndIdNotAndDeletedAtIsNull(request.getEmail(), targetUserId)) {
+                throw new RuntimeException("ALREADY_EXISTS_EMAIL");
+            }
+            targetUser.updateEmail(request.getEmail());
+        }
+
+        // 3. 전화번호 변경 시 중복 검사 (본인 및 삭제된 회원 제외)
+        if (request.getPhoneNumber() != null && !request.getPhoneNumber().equals(targetUser.getPhoneNumber())) {
+            if (userRepository.existsByPhoneNumberAndIdNotAndDeletedAtIsNull(request.getPhoneNumber(), targetUserId)) {
+                throw new RuntimeException("ALREADY_EXISTS_PHONE");
+            }
+            targetUser.updatePhoneNumber(request.getPhoneNumber());
+        }
+
+        // 4. 비밀번호 변경 시 암호화 처리
+        if (request.getPassword() != null && !request.getPassword().isBlank()) {
+            targetUser.updatePassword(passwordEncoder.encode(request.getPassword()));
+        }
+
+        // 5. 성별 변경
+        if (request.getGender() != null) {
+            targetUser.updateGender(request.getGender());
+        }
+
+        // 6. 생년월일 변경
+        if (request.getBirthdate() != null) {
+            targetUser.updateBirthdate(request.getBirthdate());
+        }
+
+        // 7. 권한(Role) 변경
+        if (request.getRole() != null) {
+            targetUser.updateRole(request.getRole());
+        }
+
+        return targetUser;
+    }
+
+    @Transactional
+    public User adminDeleteUser(Long targetUserId) {
+        User targetUser = userRepository.findById(targetUserId)
+                .orElseThrow(() -> new RuntimeException("USER_NOT_FOUND"));
+
+        if (targetUser.getDeletedAt() != null) {
+            throw new RuntimeException("USER_ALREADY_DELETED");
+        }
+
+        targetUser.softDeleteData();
+        return targetUser;
     }
 }
