@@ -87,4 +87,20 @@ public class TripExpense extends BaseTimeEntity {
         this.memo = memo;
         this.expenseDate = expenseDate;
     }
+
+
+    public void updateExpense(
+            CurrencyCode currency, BigDecimal amount, BigDecimal convertedKrwAmount,
+            ExpenseCategory category, String merchant, PaymentMethod paymentMethod,
+            String memo, LocalDateTime expenseDate
+    ) {
+        this.currency = currency;
+        this.amount = amount;
+        this.convertedKrwAmount = convertedKrwAmount;
+        this.category = category;
+        this.merchant = merchant;
+        this.paymentMethod = paymentMethod;
+        this.memo = memo;
+        this.expenseDate = expenseDate;
+    }
 }
