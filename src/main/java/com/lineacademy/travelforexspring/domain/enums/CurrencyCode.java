@@ -5,5 +5,7 @@ public enum CurrencyCode {
     KRW,
     USD,
     JPY,
-    EUR
+    EUR,
+    GBP,
+    CNY
 }
