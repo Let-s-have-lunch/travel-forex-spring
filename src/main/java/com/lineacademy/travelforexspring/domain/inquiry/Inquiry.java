@@ -72,5 +72,6 @@ public class Inquiry extends BaseTimeEntity {
     public void deleteAnswer() {
         this.answer = null;
         this.answeredAt = null;
+        this.status = InquiryStatus.PENDING;
     }
 }

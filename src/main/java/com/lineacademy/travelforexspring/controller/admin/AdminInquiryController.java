@@ -20,6 +20,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/admin/inquiries")
 @RequiredArgsConstructor
+@PreAuthorize("hasRole('ADMIN')")
 public class AdminInquiryController {
 
     private final InquiryService inquiryService;
@@ -98,7 +99,7 @@ public class AdminInquiryController {
                     "message", "문의 답변 삭제 작업 성공"
             ));
         } catch (RuntimeException e) {
-            if (e.getMessage().equals("NOT_FOUND_INQUIRY")) {
+            if (e.getMessage().equals("INQUIRY_NOT_FOUND")) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
                         .body(Map.<String, Object>of("message", "존재하지 않거나 삭제된 문의글 입니다."));
             }
