@@ -63,4 +63,9 @@ public class Inquiry extends BaseTimeEntity {
         this.status = InquiryStatus.ANSWERED;
         this.answeredAt = LocalDateTime.now();
     }
+
+    public void updateInquiry(String title, String content) {
+        this.title = title;
+        this.content = content;
+    }
 }
