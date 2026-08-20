@@ -12,13 +12,10 @@ import java.util.Date;
 
 @Component
 public class JwtUtil {
+
     private final SecretKey key;
-    public JwtUtil(
-            // 환경변수를 불러오는 법
-            @Value("${jwt.secret}") String secretString
-    ) {
-        // JwtUtil을 이용한 객체를 생성할 때 멤버변수 Key 값을 집어넣게 되는데
-        // HMAC-SHA 알고리즘을 통한 암호화로 secretKeyString의 값을 UTF-8 방식으로 가져와서(한번더 꼬아서)
+
+    public JwtUtil(@Value("${jwt.secret}") String secretString) {
         this.key = Keys.hmacShaKeyFor(secretString.getBytes(StandardCharsets.UTF_8));
     }
 
@@ -43,7 +40,10 @@ public class JwtUtil {
 
     public boolean validateToken(String token) {
         try {
-            Jwts.parser().verifyWith(key).build().parseSignedClaims(token);
+            Jwts.parser()
+                    .verifyWith(key)
+                    .build()
+                    .parseSignedClaims(token);
             return true;
         } catch (JwtException | IllegalArgumentException e) {
             return false;

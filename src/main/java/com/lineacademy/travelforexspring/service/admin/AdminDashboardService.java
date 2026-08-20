@@ -17,13 +17,15 @@ public class AdminDashboardService {
 
     @Transactional(readOnly = true)
     public AdminDashboardResponse getDashboardSummary() {
-        // Soft Delete(deletedAt IS NULL) 되지 않은 최신 가입자 5명 조회
-        List<User> recentUsers = userRepository.findTop5ByDeletedAtIsNullOrderByCreatedAtDesc();
+        // 1. 최신 가입자 5명 조회
+        List<User> recentUsers = userRepository.findTop5ByOrderByCreatedAtDesc();
 
+        // 2. Entity -> DTO 변환 (Java 16+ 의 toList 활용)
         List<AdminDashboardResponse.RecentUser> recentUserDtos = recentUsers.stream()
                 .map(AdminDashboardResponse.RecentUser::from)
                 .toList();
 
+        // 3. 최종 Response 객체 조립 후 반환
         return AdminDashboardResponse.builder()
                 .recentUsers(recentUserDtos)
                 .build();

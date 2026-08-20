@@ -14,6 +14,7 @@ import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -85,9 +86,6 @@ public class User extends BaseTimeEntity {
         this.birthdate = birthdate;
     }
 
-    // ==========================================
-    // 어드민 개별 수정 및 Soft Delete용 메서드
-    // ==========================================
     public void updateNickname(String nickname) {
         this.nickname = nickname;
     }

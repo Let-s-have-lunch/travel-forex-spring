@@ -19,6 +19,7 @@ public class AdminDashboardController {
 
     private final AdminDashboardService adminDashboardService;
 
+    // 💡 Express의 requiredAdmin 미들웨어를 이 어노테이션 하나로 완벽히 대체합니다!
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/summary")
     public ResponseEntity<Map<String, Object>> getDashboardSummary() {

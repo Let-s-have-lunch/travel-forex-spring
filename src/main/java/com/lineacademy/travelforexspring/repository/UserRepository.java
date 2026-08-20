@@ -9,36 +9,18 @@ import java.util.List;
 import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Long> {
-
-    // ==========================================
-    // 기존 트래블 프로젝트 전용 메소드 (유지)
-    // ==========================================
     boolean existsByEmail(String email);
 
     boolean existsByNickname(String nickname);
 
     boolean existsByPhoneNumber(String phoneNumber);
 
+    boolean existsByNicknameAndIdNot(String nickname, Long id);
+    boolean existsByPhoneNumberAndIdNot(String phoneNumber, Long id);
+
     Optional<User> findByEmail(String email);
 
+    List<User> findTop5ByOrderByCreatedAtDesc();
 
-    // ==========================================
-    // 어드민 기능 전용 추가 메소드
-    // ==========================================
-
-    // 이메일로 삭제되지 않은 유저 조회
-    Optional<User> findByEmailAndDeletedAtIsNull(String email);
-
-    // 유저 수정 시 본인 제외 중복 체크 (Soft Delete 고려)
-    boolean existsByNicknameAndIdNotAndDeletedAtIsNull(String nickname, Long id);
-
-    boolean existsByEmailAndIdNotAndDeletedAtIsNull(String email, Long id);
-
-    boolean existsByPhoneNumberAndIdNotAndDeletedAtIsNull(String phoneNumber, Long id);
-
-    // 어드민 대시보드용: 삭제되지 않은 최근 가입 유저 5명
-    List<User> findTop5ByDeletedAtIsNullOrderByCreatedAtDesc();
-
-    // 어드민 유저 관리용: 삭제되지 않은 회원 목록 페이징
-    Page<User> findAllByDeletedAtIsNullOrderByIdDesc(Pageable pageable);
+    Page<User> findAllByOrderByIdDesc(Pageable pageable);
 }

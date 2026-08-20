@@ -1,13 +1,15 @@
 package com.lineacademy.travelforexspring.service;
 
+import com.lineacademy.travelforexspring.domain.enums.InquiryStatus;
 import com.lineacademy.travelforexspring.domain.inquiry.Inquiry;
 import com.lineacademy.travelforexspring.domain.user.User;
-import com.lineacademy.travelforexspring.dto.admin.inquiry.request.InquiryAnswerRequest;
+import com.lineacademy.travelforexspring.dto.inquiry.request.AnswerInquiryRequest;
+import com.lineacademy.travelforexspring.dto.inquiry.request.CreateInquiryRequest;
+import com.lineacademy.travelforexspring.dto.inquiry.request.UpdateInquiryRequest;
 import com.lineacademy.travelforexspring.repository.InquiryRepository;
 import com.lineacademy.travelforexspring.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,12 +17,11 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 public class InquiryService {
-
     private final InquiryRepository inquiryRepository;
     private final UserRepository userRepository;
 
     // ==========================================
-    // 일반 유저 전용 서비스
+    // 사용자용 (User)
     // ==========================================
 
     @Transactional
@@ -38,43 +39,59 @@ public class InquiryService {
     }
 
     @Transactional(readOnly = true)
-    public Page<Inquiry> getMyInquiryList(Long userId, int page, int size) {
-        Pageable pageable = PageRequest.of(page - 1, size);
+    public Page<Inquiry> getMyInquiryList(Long userId, Pageable pageable) {
         return inquiryRepository.findAllByUserIdOrderByIdDesc(userId, pageable);
     }
 
     @Transactional(readOnly = true)
-    public Inquiry getInquiryById(Long inquiryId) {
-        return inquiryRepository.findByIdWithUser(inquiryId)
-                .orElseThrow(() -> new RuntimeException("NOT_FOUND_INQUIRY"));
+    public Inquiry getMyInquiryDetail(Long userId, Long inquiryId) {
+        return inquiryRepository.findByIdAndUserId(inquiryId, userId)
+                .orElseThrow(() -> new RuntimeException("INQUIRY_NOT_FOUND"));
+    }
+
+    @Transactional
+    public Inquiry updateInquiry(Long userId, Long inquiryId, UpdateInquiryRequest request) {
+        Inquiry inquiry = inquiryRepository.findByIdAndUserId(inquiryId, userId)
+                .orElseThrow(() -> new RuntimeException("INQUIRY_NOT_FOUND"));
+
+        // 답변이 완료된 문의는 수정 불가
+        if (inquiry.getStatus() == InquiryStatus.ANSWERED) {
+            throw new RuntimeException("CANNOT_UPDATE_ANSWERED_INQUIRY");
+        }
+
+        inquiry.updateInquiry(request.getTitle(), request.getContent());
+        return inquiry;
     }
 
     @Transactional
     public void deleteInquiry(Long userId, Long inquiryId) {
-        Inquiry inquiry = getInquiryById(inquiryId);
+        Inquiry inquiry = inquiryRepository.findByIdAndUserId(inquiryId, userId)
+                .orElseThrow(() -> new RuntimeException("INQUIRY_NOT_FOUND"));
 
-        if (!inquiry.getUser().getId().equals(userId)) {
-            throw new RuntimeException("UNAUTHORIZED_ACCESS");
-        }
-
-        inquiryRepository.delete(inquiry);
+        inquiry.softDeleteData();
     }
 
     // ==========================================
-    // 어드민 전용 서비스
+    // 관리자용 (Admin)
     // ==========================================
 
     @Transactional(readOnly = true)
-    public Page<Inquiry> getAllInquiryList(int page, int size) {
-        Pageable pageable = PageRequest.of(page - 1, size);
-        return inquiryRepository.findAllWithUserByOrderByIdDesc(pageable);
+    public Page<Inquiry> getAllInquiryList(Pageable pageable) {
+        return inquiryRepository.findAllByOrderByIdDesc(pageable);
+    }
+
+    @Transactional(readOnly = true)
+    public Inquiry getInquiryDetailForAdmin(Long inquiryId) {
+        return inquiryRepository.findById(inquiryId)
+                .orElseThrow(() -> new RuntimeException("INQUIRY_NOT_FOUND"));
     }
 
     @Transactional
-    public Inquiry answerInquiry(Long inquiryId, InquiryAnswerRequest request) {
-        Inquiry inquiry = getInquiryById(inquiryId);
+    public Inquiry answerInquiry(Long inquiryId, AnswerInquiryRequest request) {
+        Inquiry inquiry = inquiryRepository.findById(inquiryId)
+                .orElseThrow(() -> new RuntimeException("INQUIRY_NOT_FOUND"));
 
-        // 엔티티의 addAnswer() 호출
+        // 엔티티에 미리 만들어둔 편의 메서드 사용
         inquiry.addAnswer(request.getAnswer());
 
         return inquiry;
@@ -82,9 +99,8 @@ public class InquiryService {
 
     @Transactional
     public void deleteInquiryAnswer(Long inquiryId) {
-        Inquiry inquiry = getInquiryById(inquiryId);
+        Inquiry inquiry = getInquiryDetailForAdmin(inquiryId);
 
-        // 엔티티의 deleteAnswer() 호출
         inquiry.deleteAnswer();
     }
 }

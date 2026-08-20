@@ -1,92 +1,92 @@
 package com.lineacademy.travelforexspring.controller.admin;
 
 import com.lineacademy.travelforexspring.domain.inquiry.Inquiry;
-import com.lineacademy.travelforexspring.dto.admin.inquiry.request.InquiryAnswerRequest;
 import com.lineacademy.travelforexspring.dto.common.PaginationResponse;
+import com.lineacademy.travelforexspring.dto.inquiry.request.AnswerInquiryRequest;
+import com.lineacademy.travelforexspring.dto.inquiry.response.InquiryResponse;
 import com.lineacademy.travelforexspring.service.InquiryService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
 @RequestMapping("/admin/inquiries")
 @RequiredArgsConstructor
+@PreAuthorize("hasRole('ADMIN')")
 public class AdminInquiryController {
 
     private final InquiryService inquiryService;
 
-    @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping("/list")
-    public ResponseEntity<Map<String, Object>> getInquiryList(
+    // 1. 전체 문의 목록 조회
+    @GetMapping
+    public ResponseEntity<Map<String, Object>> getAllInquiries(
             @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "20") int size) {
+            @RequestParam(defaultValue = "20") int size
+    ) {
         try {
-            Page<Inquiry> inquiryPage = inquiryService.getAllInquiryList(page, size);
+            PageRequest pageRequest = PageRequest.of(page - 1, size);
+            Page<Inquiry> serviceResult = inquiryService.getAllInquiryList(pageRequest);
 
-            List<InquiryResponse> list = inquiryPage.getContent().stream()
+            List<InquiryResponse> convertList = serviceResult.stream()
                     .map(InquiryResponse::from)
                     .toList();
 
-            PaginationResponse<InquiryResponse> paginationData = PaginationResponse.of(
+            PaginationResponse<InquiryResponse> response = PaginationResponse.of(
                     page,
                     size,
-                    inquiryPage.getTotalElements(),
-                    list
+                    serviceResult.getTotalElements(),
+                    convertList
             );
 
-            return ResponseEntity.ok(Map.<String, Object>of(
-                    "message", "문의 목록을 성공적으로 조회했습니다.",
-                    "data", paginationData
+            return ResponseEntity.ok(Map.of(
+                    "message", "전체 문의 목록 조회 성공",
+                    "data", response
             ));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.<String, Object>of("message", "문의 목록 조회 중 서버 오류가 발생되었습니다."));
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("message", "서버 에러"));
         }
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    // 2. 문의 상세 조회 (관리자용)
     @GetMapping("/{inquiryId}")
-    public ResponseEntity<Map<String, Object>> getInquiryById(@PathVariable Long inquiryId) {
+    public ResponseEntity<Map<String, Object>> getInquiryDetail(@PathVariable Long inquiryId) {
         try {
-            Inquiry inquiry = inquiryService.getInquiryById(inquiryId);
-            return ResponseEntity.ok(Map.<String, Object>of(
-                    "message", "문의 글을 성공적으로 조회했습니다.",
+            Inquiry inquiry = inquiryService.getInquiryDetailForAdmin(inquiryId);
+            return ResponseEntity.ok(Map.of(
+                    "message", "문의 상세 조회 성공",
                     "data", InquiryResponse.from(inquiry)
             ));
         } catch (RuntimeException e) {
-            if ("NOT_FOUND_INQUIRY".equals(e.getMessage())) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body(Map.<String, Object>of("message", "존재하지 않거나 삭제된 문의글 입니다."));
-            }
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.<String, Object>of("message", "문의글 조회 중 서버 오류가 발생되었습니다."));
+            if (e.getMessage().equals("INQUIRY_NOT_FOUND"))
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "해당 문의를 찾을 수 없습니다."));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("message", "서버 에러"));
         }
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
-    @PatchMapping("/{inquiryId}")
+    // 3. 문의 답변 등록
+    @PatchMapping("/{inquiryId}/answer")
     public ResponseEntity<Map<String, Object>> answerInquiry(
             @PathVariable Long inquiryId,
-            @Valid @RequestBody InquiryAnswerRequest request) {
+            @Valid @RequestBody AnswerInquiryRequest request
+    ) {
         try {
-            Inquiry result = inquiryService.answerInquiry(inquiryId, request);
-            return ResponseEntity.ok(Map.<String, Object>of(
-                    "message", "문의 답변 작업 성공",
-                    "data", InquiryResponse.from(result)
+            Inquiry inquiry = inquiryService.answerInquiry(inquiryId, request);
+            return ResponseEntity.ok(Map.of(
+                    "message", "답변이 성공적으로 등록되었습니다.",
+                    "data", InquiryResponse.from(inquiry)
             ));
         } catch (RuntimeException e) {
-            if ("NOT_FOUND_INQUIRY".equals(e.getMessage())) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body(Map.<String, Object>of("message", "존재하지 않거나 삭제된 문의글 입니다."));
-            }
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.<String, Object>of("message", "문의글 작업 중 서버 오류가 발생되었습니다."));
+            if (e.getMessage().equals("INQUIRY_NOT_FOUND"))
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "해당 문의를 찾을 수 없습니다."));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("message", "서버 에러"));
         }
     }
 
@@ -99,7 +99,7 @@ public class AdminInquiryController {
                     "message", "문의 답변 삭제 작업 성공"
             ));
         } catch (RuntimeException e) {
-            if ("NOT_FOUND_INQUIRY".equals(e.getMessage())) {
+            if (e.getMessage().equals("INQUIRY_NOT_FOUND")) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
                         .body(Map.<String, Object>of("message", "존재하지 않거나 삭제된 문의글 입니다."));
             }

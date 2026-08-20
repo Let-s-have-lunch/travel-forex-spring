@@ -58,17 +58,20 @@ public class Inquiry extends BaseTimeEntity {
         this.status = InquiryStatus.PENDING;
     }
 
-    // 답변 등록/수정
     public void addAnswer(String answer) {
         this.answer = answer;
         this.status = InquiryStatus.ANSWERED;
         this.answeredAt = LocalDateTime.now();
     }
 
-    // 답변 삭제 (어드민 전용 - 추가된 메서드)
+    public void updateInquiry(String title, String content) {
+        this.title = title;
+        this.content = content;
+    }
+
     public void deleteAnswer() {
         this.answer = null;
-        this.status = InquiryStatus.PENDING;
         this.answeredAt = null;
+        this.status = InquiryStatus.PENDING;
     }
 }

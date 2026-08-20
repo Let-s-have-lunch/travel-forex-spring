@@ -62,7 +62,7 @@ public class AdminUserController {
                     "data", UserResponse.from(user)
             ));
         } catch (RuntimeException e) {
-            if ("USER_NOT_FOUND".equals(e.getMessage())) {
+            if (e.getMessage().equals("USER_NOT_FOUND")) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
                         .body(Map.of("message", "존재하지 않는 유저입니다."));
             }
@@ -113,11 +113,11 @@ public class AdminUserController {
                     "data", UserResponse.from(deletedUser)
             ));
         } catch (RuntimeException e) {
-            if ("USER_NOT_FOUND".equals(e.getMessage())) {
+            if (e.getMessage().equals("USER_NOT_FOUND")) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
                         .body(Map.of("message", "유저를 찾을 수 없습니다."));
             }
-            if ("USER_ALREADY_DELETED".equals(e.getMessage())) {
+            if (e.getMessage().equals("USER_ALREADY_DELETED")) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                         .body(Map.of("message", "이미 삭제된 유저입니다."));
             }
