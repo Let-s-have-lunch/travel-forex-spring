@@ -14,6 +14,7 @@ import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -83,5 +84,29 @@ public class User extends BaseTimeEntity {
         this.phoneNumber = phoneNumber;
         this.gender = gender;
         this.birthdate = birthdate;
+    }
+
+    public void updateNickname(String nickname) {
+        this.nickname = nickname;
+    }
+
+    public void updateEmail(String email) {
+        this.email = email;
+    }
+
+    public void updatePhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public void updateGender(Gender gender) {
+        this.gender = gender;
+    }
+
+    public void updateBirthdate(LocalDate birthdate) {
+        this.birthdate = birthdate;
+    }
+
+    public void updateRole(UserRole role) {
+        this.role = role;
     }
 }
