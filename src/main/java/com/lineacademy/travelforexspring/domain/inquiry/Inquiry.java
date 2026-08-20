@@ -68,4 +68,9 @@ public class Inquiry extends BaseTimeEntity {
         this.title = title;
         this.content = content;
     }
+
+    public void deleteAnswer() {
+        this.answer = null;
+        this.answeredAt = null;
+    }
 }

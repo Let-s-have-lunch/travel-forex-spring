@@ -11,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -85,6 +86,24 @@ public class AdminInquiryController {
             if (e.getMessage().equals("INQUIRY_NOT_FOUND"))
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "해당 문의를 찾을 수 없습니다."));
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("message", "서버 에러"));
+        }
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @DeleteMapping("/{inquiryId}")
+    public ResponseEntity<Map<String, Object>> deleteInquiryAnswer(@PathVariable Long inquiryId) {
+        try {
+            inquiryService.deleteInquiryAnswer(inquiryId);
+            return ResponseEntity.ok(Map.<String, Object>of(
+                    "message", "문의 답변 삭제 작업 성공"
+            ));
+        } catch (RuntimeException e) {
+            if (e.getMessage().equals("NOT_FOUND_INQUIRY")) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(Map.<String, Object>of("message", "존재하지 않거나 삭제된 문의글 입니다."));
+            }
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.<String, Object>of("message", "문의글 답변 삭제 중 서버 오류가 발생되었습니다."));
         }
     }
 }

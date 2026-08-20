@@ -96,4 +96,11 @@ public class InquiryService {
 
         return inquiry;
     }
+
+    @Transactional
+    public void deleteInquiryAnswer(Long inquiryId) {
+        Inquiry inquiry = getInquiryDetailForAdmin(inquiryId);
+
+        inquiry.deleteAnswer();
+    }
 }
