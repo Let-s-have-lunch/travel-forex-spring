@@ -5,6 +5,7 @@ import com.lineacademy.travelforexspring.domain.enums.Gender;
 import com.lineacademy.travelforexspring.domain.enums.UserRole;
 import com.lineacademy.travelforexspring.domain.inquiry.Inquiry;
 import com.lineacademy.travelforexspring.domain.trip.Trip;
+import com.lineacademy.travelforexspring.domain.wallet.Wallet;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -56,7 +57,8 @@ public class User extends BaseTimeEntity {
     @Column(nullable = false)
     private UserRole role = UserRole.USER;
 
-    // TODO : Wallet과 관계 짓기
+    @OneToMany(mappedBy = "user")
+    private List<Wallet> wallets = new ArrayList<>();
 
     @OneToMany(mappedBy = "user")
     private List<Trip> trips = new ArrayList<>();
