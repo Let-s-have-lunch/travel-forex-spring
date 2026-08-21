@@ -21,10 +21,16 @@ public class TripExpenseResponse {
     private String merchant;
     private PaymentMethod paymentMethod;
     private boolean isWalletLinked;
+    private Long walletId; // 👈 추가
     private String memo;
     private LocalDateTime expenseDate;
 
     public static TripExpenseResponse from(TripExpense expense) {
+        Long linkedWalletId = null;
+        if (expense.isWalletLinked() && expense.getWalletTransaction() != null) {
+            linkedWalletId = expense.getWalletTransaction().getWallet().getId();
+        }
+
         return TripExpenseResponse.builder()
                 .id(expense.getId())
                 .currency(expense.getCurrency())
@@ -34,6 +40,7 @@ public class TripExpenseResponse {
                 .merchant(expense.getMerchant())
                 .paymentMethod(expense.getPaymentMethod())
                 .isWalletLinked(expense.isWalletLinked())
+                .walletId(linkedWalletId) // 👈 매핑
                 .memo(expense.getMemo())
                 .expenseDate(expense.getExpenseDate())
                 .build();
