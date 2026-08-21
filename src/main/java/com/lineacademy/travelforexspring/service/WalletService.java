@@ -22,13 +22,20 @@ public class WalletService {
     public Wallet createWallet(Long userId, CreateWalletRequest request) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("USER_NOT_FOUND"));
+
         if (walletRepository.existsByUserIdAndCurrency(userId, request.getCurrency())) {
             throw new RuntimeException("ALREADY_EXISTS_WALLET");
         }
+
+        // [수정 포인트] 사용자가 입력한 금액이 있으면 그 값을 넣고, 없으면 0으로 설정
+        BigDecimal initialBalance = (request.getBalance() != null)
+                ? request.getBalance()
+                : BigDecimal.ZERO;
+
         Wallet wallet = Wallet.builder()
                 .user(user)
                 .currency(request.getCurrency())
-                .balance(BigDecimal.ZERO)
+                .balance(initialBalance) // 👈 BigDecimal.ZERO 대신 initialBalance 적용
                 .build();
 
         return walletRepository.save(wallet);
