@@ -1,5 +1,6 @@
 package com.lineacademy.travelforexspring.dto.trip.request;
 
+import com.lineacademy.travelforexspring.domain.enums.CurrencyCode;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -24,4 +25,7 @@ public class UpdateTripRequest {
     @NotNull(message = "예산을 입력해주세요.")
     @DecimalMin(value = "0.0", message = "예산은 0 이상이어야 합니다.")
     private BigDecimal budgetKrw;
+
+    @NotNull(message = "기준 통화를 선택해주세요.")
+    private CurrencyCode currency;
 }

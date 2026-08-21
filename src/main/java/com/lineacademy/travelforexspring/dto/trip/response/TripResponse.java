@@ -1,5 +1,6 @@
 package com.lineacademy.travelforexspring.dto.trip.response;
 
+import com.lineacademy.travelforexspring.domain.enums.CurrencyCode;
 import com.lineacademy.travelforexspring.domain.trip.Trip;
 import lombok.Builder;
 import lombok.Getter;
@@ -15,6 +16,7 @@ public class TripResponse {
     private LocalDate startDate;
     private LocalDate endDate;
     private BigDecimal budgetKrw;
+    private CurrencyCode currency;
 
     public static TripResponse from(Trip trip) {
         return TripResponse.builder()
@@ -23,6 +25,7 @@ public class TripResponse {
                 .startDate(trip.getStartDate())
                 .endDate(trip.getEndDate())
                 .budgetKrw(trip.getBudgetKrw())
+                .currency(trip.getCurrency())
                 .build();
     }
 }

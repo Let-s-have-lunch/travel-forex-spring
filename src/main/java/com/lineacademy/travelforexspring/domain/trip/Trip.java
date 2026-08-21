@@ -1,6 +1,7 @@
 package com.lineacademy.travelforexspring.domain.trip;
 
 import com.lineacademy.travelforexspring.domain.common.BaseTimeEntity;
+import com.lineacademy.travelforexspring.domain.enums.CurrencyCode;
 import com.lineacademy.travelforexspring.domain.tripexpense.TripExpense;
 import com.lineacademy.travelforexspring.domain.user.User;
 import jakarta.persistence.*;
@@ -39,6 +40,10 @@ public class Trip extends BaseTimeEntity {
     @Column(name = "budget_krw", precision = 15, scale = 2, nullable = false)
     private BigDecimal budgetKrw = BigDecimal.ZERO;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private CurrencyCode currency;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
@@ -47,18 +52,20 @@ public class Trip extends BaseTimeEntity {
     private List<TripExpense> expenses = new ArrayList<>();
 
     @Builder
-    public Trip(User user, String title, LocalDate startDate, LocalDate endDate, BigDecimal budgetKrw) {
+    public Trip(User user, String title, LocalDate startDate, LocalDate endDate, BigDecimal budgetKrw, CurrencyCode currency) {
         this.user = user;
         this.title = title;
         this.startDate = startDate;
         this.endDate = endDate;
         this.budgetKrw = budgetKrw != null ? budgetKrw : BigDecimal.ZERO;
+        this.currency = currency != null ? currency : CurrencyCode.KRW;
     }
 
-    public void updateTrip(String title, LocalDate startDate, LocalDate endDate, BigDecimal budgetKrw) {
+    public void updateTrip(String title, LocalDate startDate, LocalDate endDate, BigDecimal budgetKrw, CurrencyCode currency) {
         this.title = title;
         this.startDate = startDate;
         this.endDate = endDate;
         this.budgetKrw = budgetKrw != null ? budgetKrw : BigDecimal.ZERO;
+        this.currency = currency != null ? currency : this.currency;
     }
 }

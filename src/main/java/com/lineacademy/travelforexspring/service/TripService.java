@@ -36,6 +36,7 @@ public class TripService {
                 .startDate(request.getStartDate())
                 .endDate(request.getEndDate())
                 .budgetKrw(request.getBudgetKrw())
+                .currency(request.getCurrency()) // 🆕 통화 정보 추가
                 .build();
 
         return tripRepository.save(trip);
@@ -70,7 +71,8 @@ public class TripService {
                 request.getTitle(),
                 request.getStartDate(),
                 request.getEndDate(),
-                request.getBudgetKrw()
+                request.getBudgetKrw(),
+                request.getCurrency() // 🆕 수정 시 통화 정보도 업데이트 파라미터로 넘김
         );
 
         return trip;
