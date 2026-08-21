@@ -109,7 +109,7 @@ public class UserService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("USER_NOT_FOUND"));
 
-        if (!passwordEncoder.matches(request.getSpringPassword(), user.getPassword())) {
+        if (!passwordEncoder.matches(request.getPrevPassword(), user.getPassword())) {
             throw new RuntimeException("INVALID_PASSWORD");
         }
 
