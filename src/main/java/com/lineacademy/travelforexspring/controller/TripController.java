@@ -50,11 +50,14 @@ public class TripController {
     public ResponseEntity<Map<String, Object>> getTripList(
             @AuthenticationPrincipal Long currentUserId,
             @RequestParam(defaultValue = "1") int page,
-            @RequestParam(defaultValue = "20") int size
+            @RequestParam(defaultValue = "20") int size,
+            @RequestParam(defaultValue = "ONGOING") String status
     ) {
         try {
             PageRequest pageRequest = PageRequest.of(page - 1, size);
-            Page<Trip> serviceResult = tripService.getTripList(currentUserId, pageRequest);
+
+            // 👈 서비스 호출 시 status 파라미터 추가 전달
+            Page<Trip> serviceResult = tripService.getTripList(currentUserId, status, pageRequest);
 
             List<TripResponse> convertList = serviceResult.stream()
                     .map(TripResponse::from)

@@ -13,6 +13,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+
 
 @Service
 @RequiredArgsConstructor
@@ -40,8 +42,15 @@ public class TripService {
     }
 
     @Transactional(readOnly = true)
-    public Page<Trip> getTripList(Long userId, Pageable pageable) {
-        return tripRepository.findAllByUserIdOrderByIdDesc(userId, pageable);
+    public Page<Trip> getTripList(Long userId, String status, Pageable pageable) {
+
+        LocalDate today = LocalDate.now();
+
+        if ("PAST".equals(status)) {
+            return tripRepository.findAllByUserIdAndEndDateLessThanOrderByIdDesc(userId, today, pageable);
+        } else {
+            return tripRepository.findAllByUserIdAndEndDateGreaterThanEqualOrderByIdDesc(userId, today, pageable);
+        }
     }
 
     @Transactional(readOnly = true)
