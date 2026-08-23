@@ -3,7 +3,7 @@ package com.lineacademy.travelforexspring.controller.admin;
 import com.lineacademy.travelforexspring.domain.user.User;
 import com.lineacademy.travelforexspring.dto.admin.user.request.AdminUserUpdateRequest;
 import com.lineacademy.travelforexspring.dto.common.PaginationResponse;
-import com.lineacademy.travelforexspring.dto.user.response.UserResponse;
+import com.lineacademy.travelforexspring.dto.general.user.response.UserResponse;
 import com.lineacademy.travelforexspring.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

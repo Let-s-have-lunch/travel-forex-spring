@@ -1,8 +1,9 @@
 package com.lineacademy.travelforexspring.service;
 
 import com.lineacademy.travelforexspring.domain.enums.CurrencyCode;
-import com.lineacademy.travelforexspring.dto.exchangerate.response.ExchangeRateResponse;
+import com.lineacademy.travelforexspring.dto.general.exchangerate.ExchangeRateResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -18,37 +19,31 @@ public class ExchangeRateService {
 
     private final RestTemplate restTemplate;
 
-    // TODO: 실제 발급받은 API KEY로 교체해야 합니다.
-    private static final String API_KEY = "YOUR_API_KEY_HERE";
-    private static final String API_URL = "https://v6.exchangerate-api.com/v6/" + API_KEY + "/latest/KRW";
+    @Value("${exchange-rate.api-key}")
+    private String apiKey;
 
-    // 환율 정보를 메모리에 임시 저장 (캐싱)
     private final Map<CurrencyCode, BigDecimal> exchangeRateCache = new ConcurrentHashMap<>();
     private LocalDateTime lastUpdated = LocalDateTime.MIN;
 
-    /**
-     * 외부 API에서 최신 환율을 가져와 캐시를 갱신합니다.
-     * (1시간 이내에 이미 갱신했다면 기존 캐시를 사용해 API 호출을 아낍니다)
-     */
     public void fetchLatestRates() {
         if (LocalDateTime.now().minusHours(1).isBefore(lastUpdated)) {
-            return; // 1시간 이내 갱신됨 -> API 호출 생략
+            return;
         }
 
+        String apiUrl = "https://v6.exchangerate-api.com/v6/" + apiKey + "/latest/KRW";
+
         try {
-            // 외부 API 호출
-            Map<String, Object> response = restTemplate.getForObject(API_URL, Map.class);
+            Map response = restTemplate.getForObject(apiUrl, Map.class);
 
             if (response != null && "success".equals(response.get("result"))) {
                 Map<String, Number> conversionRates = (Map<String, Number>) response.get("conversion_rates");
 
-                // API는 1 KRW = ? USD 형태로 주므로 역산해서 1 USD = ? KRW 로 변환하여 저장
                 for (CurrencyCode currency : CurrencyCode.values()) {
                     if (currency == CurrencyCode.KRW) continue;
 
                     if (conversionRates.containsKey(currency.name())) {
                         double ratePerKrw = conversionRates.get(currency.name()).doubleValue();
-                        // 1 / rate = 1 외화당 원화 가격
+
                         BigDecimal krwRate = BigDecimal.ONE.divide(BigDecimal.valueOf(ratePerKrw), 4, RoundingMode.HALF_UP);
                         exchangeRateCache.put(currency, krwRate);
                     }
@@ -57,13 +52,9 @@ public class ExchangeRateService {
             }
         } catch (Exception e) {
             System.err.println("환율 정보를 가져오는 데 실패했습니다: " + e.getMessage());
-            // TODO: 실패 시 DB에 저장해둔 마지막 환율을 불러오는 등의 Fallback 로직 필요
         }
     }
 
-    /**
-     * 특정 통화의 현재 환율을 조회하고, 입력된 금액을 원화로 계산합니다.
-     */
     public ExchangeRateResponse calculateKrw(CurrencyCode currency, BigDecimal amount) {
         if (currency == CurrencyCode.KRW) {
             return ExchangeRateResponse.builder()
@@ -74,16 +65,13 @@ public class ExchangeRateService {
                     .build();
         }
 
-        // 캐시 갱신 확인
         fetchLatestRates();
 
-        // 캐시에 환율이 없으면 임시로 기본값(또는 예외) 처리
         BigDecimal currentRate = exchangeRateCache.getOrDefault(currency, BigDecimal.ZERO);
         if (currentRate.compareTo(BigDecimal.ZERO) == 0) {
             throw new RuntimeException("RATE_NOT_AVAILABLE");
         }
 
-        // 외화 * 적용환율 = 원화
         BigDecimal convertedKrw = amount.multiply(currentRate).setScale(0, RoundingMode.HALF_UP);
 
         return ExchangeRateResponse.builder()

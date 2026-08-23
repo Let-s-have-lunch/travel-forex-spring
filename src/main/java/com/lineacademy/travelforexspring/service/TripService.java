@@ -2,8 +2,8 @@ package com.lineacademy.travelforexspring.service;
 
 import com.lineacademy.travelforexspring.domain.trip.Trip;
 import com.lineacademy.travelforexspring.domain.user.User;
-import com.lineacademy.travelforexspring.dto.trip.request.CreateTripRequest;
-import com.lineacademy.travelforexspring.dto.trip.request.UpdateTripRequest;
+import com.lineacademy.travelforexspring.dto.general.trip.request.CreateTripRequest;
+import com.lineacademy.travelforexspring.dto.general.trip.request.UpdateTripRequest;
 import com.lineacademy.travelforexspring.repository.TripRepository;
 import com.lineacademy.travelforexspring.repository.UserRepository;
 import com.lineacademy.travelforexspring.utils.DateUtil;

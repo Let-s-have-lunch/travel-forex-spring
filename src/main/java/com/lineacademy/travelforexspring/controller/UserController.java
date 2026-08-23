@@ -1,8 +1,8 @@
 package com.lineacademy.travelforexspring.controller;
 
 import com.lineacademy.travelforexspring.domain.user.User;
-import com.lineacademy.travelforexspring.dto.user.request.*;
-import com.lineacademy.travelforexspring.dto.user.response.UserResponse;
+import com.lineacademy.travelforexspring.dto.general.user.request.*;
+import com.lineacademy.travelforexspring.dto.general.user.response.UserResponse;
 import com.lineacademy.travelforexspring.service.UserService;
 import com.lineacademy.travelforexspring.utils.JwtUtil;
 import jakarta.validation.Valid;

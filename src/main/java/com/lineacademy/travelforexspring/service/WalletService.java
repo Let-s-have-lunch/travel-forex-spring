@@ -2,7 +2,7 @@ package com.lineacademy.travelforexspring.service;
 
 import com.lineacademy.travelforexspring.domain.user.User;
 import com.lineacademy.travelforexspring.domain.wallet.Wallet;
-import com.lineacademy.travelforexspring.dto.wallet.request.CreateWalletRequest;
+import com.lineacademy.travelforexspring.dto.general.wallet.request.CreateWalletRequest;
 import com.lineacademy.travelforexspring.repository.UserRepository;
 import com.lineacademy.travelforexspring.repository.WalletRepository;
 import lombok.RequiredArgsConstructor;

@@ -2,7 +2,7 @@ package com.lineacademy.travelforexspring.controller;
 
 
 import com.lineacademy.travelforexspring.domain.enums.CurrencyCode;
-import com.lineacademy.travelforexspring.dto.exchangerate.response.ExchangeRateResponse;
+import com.lineacademy.travelforexspring.dto.general.exchangerate.ExchangeRateResponse;
 import com.lineacademy.travelforexspring.service.ExchangeRateService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

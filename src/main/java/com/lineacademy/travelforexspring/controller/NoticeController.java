@@ -2,7 +2,7 @@ package com.lineacademy.travelforexspring.controller;
 
 import com.lineacademy.travelforexspring.domain.notice.Notice;
 import com.lineacademy.travelforexspring.dto.common.PaginationResponse;
-import com.lineacademy.travelforexspring.dto.notice.response.NoticeResponse;
+import com.lineacademy.travelforexspring.dto.general.notice.response.NoticeResponse;
 import com.lineacademy.travelforexspring.service.NoticeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

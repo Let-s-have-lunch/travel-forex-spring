@@ -1,8 +1,8 @@
 package com.lineacademy.travelforexspring.controller;
 
 import com.lineacademy.travelforexspring.domain.wallet.Wallet;
-import com.lineacademy.travelforexspring.dto.wallet.request.CreateWalletRequest;
-import com.lineacademy.travelforexspring.dto.wallet.response.WalletResponse;
+import com.lineacademy.travelforexspring.dto.general.wallet.request.CreateWalletRequest;
+import com.lineacademy.travelforexspring.dto.general.wallet.response.WalletResponse;
 import com.lineacademy.travelforexspring.service.WalletService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

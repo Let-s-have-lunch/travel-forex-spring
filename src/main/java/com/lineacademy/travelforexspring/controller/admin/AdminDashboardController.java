@@ -1,6 +1,6 @@
 package com.lineacademy.travelforexspring.controller.admin;
 
-import com.lineacademy.travelforexspring.dto.admin.response.AdminDashboardResponse;
+import com.lineacademy.travelforexspring.dto.admin.dashboard.response.AdminDashboardResponse;
 import com.lineacademy.travelforexspring.service.admin.AdminDashboardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

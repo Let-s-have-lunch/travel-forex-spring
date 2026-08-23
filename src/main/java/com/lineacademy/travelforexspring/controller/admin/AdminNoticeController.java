@@ -1,9 +1,9 @@
 package com.lineacademy.travelforexspring.controller.admin;
 
 import com.lineacademy.travelforexspring.domain.notice.Notice;
-import com.lineacademy.travelforexspring.dto.notice.request.CreateNoticeRequest;
-import com.lineacademy.travelforexspring.dto.notice.request.UpdateNoticeRequest;
-import com.lineacademy.travelforexspring.dto.notice.response.NoticeResponse;
+import com.lineacademy.travelforexspring.dto.general.notice.request.CreateNoticeRequest;
+import com.lineacademy.travelforexspring.dto.general.notice.request.UpdateNoticeRequest;
+import com.lineacademy.travelforexspring.dto.general.notice.response.NoticeResponse;
 import com.lineacademy.travelforexspring.service.NoticeService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

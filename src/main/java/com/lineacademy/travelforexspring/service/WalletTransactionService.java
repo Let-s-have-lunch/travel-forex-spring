@@ -3,8 +3,8 @@ package com.lineacademy.travelforexspring.service;
 import com.lineacademy.travelforexspring.domain.enums.TransactionType;
 import com.lineacademy.travelforexspring.domain.wallet.Wallet;
 import com.lineacademy.travelforexspring.domain.wallettransaction.WalletTransaction;
-import com.lineacademy.travelforexspring.dto.wallettransaction.request.CreateTransactionRequest;
-import com.lineacademy.travelforexspring.dto.wallettransaction.request.UpdateTransactionRequest;
+import com.lineacademy.travelforexspring.dto.general.wallettransaction.request.CreateTransactionRequest;
+import com.lineacademy.travelforexspring.dto.general.wallettransaction.request.UpdateTransactionRequest;
 import com.lineacademy.travelforexspring.repository.WalletRepository;
 import com.lineacademy.travelforexspring.repository.WalletTransactionRepository;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +23,7 @@ public class WalletTransactionService {
 
     @Transactional
     public WalletTransaction createTransaction(Long userId, Long walletId, CreateTransactionRequest request) {
-        Wallet wallet = walletRepository.findByIdAndUserId(walletId, userId) // 파라미터 순서 (walletId, userId) 맞춤
+        Wallet wallet = walletRepository.findByIdAndUserId(walletId, userId)
                 .orElseThrow(() -> new RuntimeException("WALLET_NOT_FOUND"));
 
         if (request.getTransactionType() == TransactionType.DEPOSIT) {
