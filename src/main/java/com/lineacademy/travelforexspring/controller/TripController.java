@@ -1,6 +1,5 @@
 package com.lineacademy.travelforexspring.controller;
 
-import com.lineacademy.travelforexspring.domain.trip.Trip;
 import com.lineacademy.travelforexspring.dto.common.PaginationResponse;
 import com.lineacademy.travelforexspring.dto.general.trip.request.CreateTripRequest;
 import com.lineacademy.travelforexspring.dto.general.trip.request.UpdateTripRequest;
@@ -15,14 +14,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Map;
 
 @RestController
 @RequestMapping("/trips")
 @RequiredArgsConstructor
 public class TripController {
-
     private final TripService tripService;
 
     @PostMapping
@@ -31,11 +28,11 @@ public class TripController {
             @Valid @RequestBody CreateTripRequest request
     ) {
         try {
-            Trip newTrip = tripService.createTrip(currentUserId, request);
+            TripResponse response = tripService.createTrip(currentUserId, request);
             return ResponseEntity.status(HttpStatus.CREATED)
                     .body(Map.of(
                             "message", "여행 일정이 성공적으로 등록되었습니다.",
-                            "data", TripResponse.from(newTrip)
+                            "data", response
                     ));
         } catch (RuntimeException e) {
             if (e.getMessage().equals("USER_NOT_FOUND"))
@@ -55,19 +52,13 @@ public class TripController {
     ) {
         try {
             PageRequest pageRequest = PageRequest.of(page - 1, size);
-
-            // 👈 서비스 호출 시 status 파라미터 추가 전달
-            Page<Trip> serviceResult = tripService.getTripList(currentUserId, status, pageRequest);
-
-            List<TripResponse> convertList = serviceResult.stream()
-                    .map(TripResponse::from)
-                    .toList();
+            Page<TripResponse> serviceResult = tripService.getTripList(currentUserId, status, pageRequest);
 
             PaginationResponse<TripResponse> response = PaginationResponse.of(
                     page,
                     size,
                     serviceResult.getTotalElements(),
-                    convertList
+                    serviceResult.getContent()
             );
 
             return ResponseEntity.ok(Map.of(
@@ -82,13 +73,13 @@ public class TripController {
     @GetMapping("/{tripId}")
     public ResponseEntity<Map<String, Object>> getTripDetail(
             @AuthenticationPrincipal Long currentUserId,
-            @PathVariable Long tripId
+            @PathVariable("tripId") Long tripId
     ) {
         try {
-            Trip trip = tripService.getTripDetail(currentUserId, tripId);
+            TripResponse response = tripService.getTripDetail(currentUserId, tripId);
             return ResponseEntity.ok(Map.of(
                     "message", "여행 상세 조회 성공",
-                    "data", TripResponse.from(trip)
+                    "data", response
             ));
         } catch (RuntimeException e) {
             if (e.getMessage().equals("TRIP_NOT_FOUND"))
@@ -100,14 +91,14 @@ public class TripController {
     @PatchMapping("/{tripId}")
     public ResponseEntity<Map<String, Object>> updateTrip(
             @AuthenticationPrincipal Long currentUserId,
-            @PathVariable Long tripId,
+            @PathVariable("tripId") Long tripId,
             @Valid @RequestBody UpdateTripRequest request
     ) {
         try {
-            Trip updatedTrip = tripService.updateTrip(currentUserId, tripId, request);
+            TripResponse response = tripService.updateTrip(currentUserId, tripId, request);
             return ResponseEntity.ok(Map.of(
                     "message", "여행 일정이 성공적으로 수정되었습니다.",
-                    "data", TripResponse.from(updatedTrip)
+                    "data", response
             ));
         } catch (RuntimeException e) {
             if (e.getMessage().equals("TRIP_NOT_FOUND"))
@@ -121,7 +112,7 @@ public class TripController {
     @DeleteMapping("/{tripId}")
     public ResponseEntity<Map<String, Object>> deleteTrip(
             @AuthenticationPrincipal Long currentUserId,
-            @PathVariable Long tripId
+            @PathVariable("tripId") Long tripId
     ) {
         try {
             tripService.deleteTrip(currentUserId, tripId);
