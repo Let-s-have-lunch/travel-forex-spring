@@ -2,7 +2,9 @@ package com.lineacademy.travelforexspring.controller;
 
 
 import com.lineacademy.travelforexspring.domain.enums.CurrencyCode;
+import com.lineacademy.travelforexspring.domain.enums.RatePeriod;
 import com.lineacademy.travelforexspring.dto.general.exchangerate.ExchangeRateResponse;
+import com.lineacademy.travelforexspring.dto.general.exchangerate.ExchangeRateSummaryResponse;
 import com.lineacademy.travelforexspring.service.ExchangeRateService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -42,6 +45,32 @@ public class ExchangeRateController {
             if (e.getMessage().equals("RATE_NOT_AVAILABLE")) {
                 return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE)
                         .body(Map.of("message", "현재 해당 통화의 환율 정보를 불러올 수 없습니다."));
+            }
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("message", "서버 에러"));
+        }
+    }
+
+    /**
+     * 여러 통화의 현재 환율 + 등락률 + 시계열 이력을 한 번에 반환합니다. (그래프용)
+     * 예: GET /exchange-rates/summary?currencies=USD,JPY,EUR&period=ONE_DAY
+     */
+    @GetMapping("/summary")
+    public ResponseEntity<Map<String, Object>> getSummary(
+            @RequestParam List<CurrencyCode> currencies,
+            @RequestParam(defaultValue = "ONE_DAY") RatePeriod period
+    ) {
+        try {
+            List<ExchangeRateSummaryResponse> response = exchangeRateService.getSummary(currencies, period);
+
+            return ResponseEntity.ok(Map.of(
+                    "message", "환율 요약 조회 완료",
+                    "data", response
+            ));
+        } catch (RuntimeException e) {
+            if (e.getMessage().equals("RATE_NOT_AVAILABLE")) {
+                return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE)
+                        .body(Map.of("message", "환율 이력 데이터가 아직 충분하지 않습니다."));
             }
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(Map.of("message", "서버 에러"));
