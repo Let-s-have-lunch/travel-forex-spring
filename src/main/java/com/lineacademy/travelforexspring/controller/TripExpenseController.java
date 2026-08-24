@@ -2,9 +2,9 @@ package com.lineacademy.travelforexspring.controller;
 
 import com.lineacademy.travelforexspring.domain.tripexpense.TripExpense;
 import com.lineacademy.travelforexspring.dto.common.PaginationResponse;
-import com.lineacademy.travelforexspring.dto.tripexpense.request.CreateTripExpenseRequest;
-import com.lineacademy.travelforexspring.dto.tripexpense.request.UpdateTripExpenseRequest;
-import com.lineacademy.travelforexspring.dto.tripexpense.response.TripExpenseResponse;
+import com.lineacademy.travelforexspring.dto.general.tripexpense.request.CreateTripExpenseRequest;
+import com.lineacademy.travelforexspring.dto.general.tripexpense.request.UpdateTripExpenseRequest;
+import com.lineacademy.travelforexspring.dto.general.tripexpense.response.TripExpenseResponse;
 import com.lineacademy.travelforexspring.service.TripExpenseService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

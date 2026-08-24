@@ -1,7 +1,7 @@
 package com.lineacademy.travelforexspring.service.admin;
 
 import com.lineacademy.travelforexspring.domain.user.User;
-import com.lineacademy.travelforexspring.dto.admin.response.AdminDashboardResponse;
+import com.lineacademy.travelforexspring.dto.admin.dashboard.response.AdminDashboardResponse;
 import com.lineacademy.travelforexspring.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

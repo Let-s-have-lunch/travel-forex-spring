@@ -2,9 +2,9 @@ package com.lineacademy.travelforexspring.controller;
 
 import com.lineacademy.travelforexspring.domain.inquiry.Inquiry;
 import com.lineacademy.travelforexspring.dto.common.PaginationResponse;
-import com.lineacademy.travelforexspring.dto.inquiry.request.CreateInquiryRequest;
-import com.lineacademy.travelforexspring.dto.inquiry.request.UpdateInquiryRequest;
-import com.lineacademy.travelforexspring.dto.inquiry.response.InquiryResponse;
+import com.lineacademy.travelforexspring.dto.general.inquiry.request.CreateInquiryRequest;
+import com.lineacademy.travelforexspring.dto.general.inquiry.request.UpdateInquiryRequest;
+import com.lineacademy.travelforexspring.dto.general.inquiry.response.InquiryResponse;
 import com.lineacademy.travelforexspring.service.InquiryService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

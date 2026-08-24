@@ -2,9 +2,9 @@ package com.lineacademy.travelforexspring.controller;
 
 import com.lineacademy.travelforexspring.domain.wallettransaction.WalletTransaction;
 import com.lineacademy.travelforexspring.dto.common.CursorPaginationResponse;
-import com.lineacademy.travelforexspring.dto.wallettransaction.request.CreateTransactionRequest;
-import com.lineacademy.travelforexspring.dto.wallettransaction.request.UpdateTransactionRequest;
-import com.lineacademy.travelforexspring.dto.wallettransaction.response.TransactionResponse;
+import com.lineacademy.travelforexspring.dto.general.wallettransaction.request.CreateTransactionRequest;
+import com.lineacademy.travelforexspring.dto.general.wallettransaction.request.UpdateTransactionRequest;
+import com.lineacademy.travelforexspring.dto.general.wallettransaction.response.TransactionResponse;
 import com.lineacademy.travelforexspring.service.WalletTransactionService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

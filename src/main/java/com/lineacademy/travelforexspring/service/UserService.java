@@ -3,7 +3,7 @@ package com.lineacademy.travelforexspring.service;
 import com.lineacademy.travelforexspring.domain.enums.UserRole;
 import com.lineacademy.travelforexspring.domain.user.User;
 import com.lineacademy.travelforexspring.dto.admin.user.request.AdminUserUpdateRequest;
-import com.lineacademy.travelforexspring.dto.user.request.*;
+import com.lineacademy.travelforexspring.dto.general.user.request.*;
 import com.lineacademy.travelforexspring.repository.UserRepository;
 import com.lineacademy.travelforexspring.utils.JwtUtil;
 import lombok.RequiredArgsConstructor;
